@@ -1,0 +1,20 @@
+c-cart-product{
+    min-width: 200px;
+    flex:1;
+}
+.content{
+    display:flex;
+    flex-wrap:wrap;
+}
+.wrapper{
+    background:#e3e5e4;
+}
+.clsearch{
+    font-weight: bold;
+    font-size: 0.85rem;
+    text-transform: uppercase;    
+    /* background-color: rgb(242, 242, 242); */
+    text-align: center;
+    width: 40%;
+    height: 100px;
+}

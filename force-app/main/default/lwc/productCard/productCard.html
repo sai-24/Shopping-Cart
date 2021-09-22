@@ -1,0 +1,25 @@
+<template>
+    <lightning-card title={productName} icon-name="standard:apex_plugin">
+       
+        <template if:true={recordId}>
+            <lightning-button-icon icon-name="utility:expand_alt" slot="actions" onclick={handleNavigateToRecord}></lightning-button-icon>
+            <div class="slds-m-horizontal_medium">
+                <img src={productPictureUrl} alt="Car picture"/>
+                <lightning-record-view-form onload={handleRecordLoaded} record-id={recordId} object-api-name="shop_product__c" density="compact">
+                    <lightning-output-field field-name={brandField}></lightning-output-field>
+                    <lightning-output-field field-name={colourField}></lightning-output-field>
+                    <lightning-output-field field-name={priceField}></lightning-output-field>
+                    <section>Other Features</section>
+                    <lightning-output-field field-name={storageField}></lightning-output-field>
+                    <lightning-output-field field-name={batteryField}></lightning-output-field>
+                    <lightning-output-field field-name={emiField}></lightning-output-field>
+                    <lightning-output-field field-name={descriptionField}></lightning-output-field>
+                </lightning-record-view-form> 
+            </div>
+        </template>
+        <template if:false={recordId}>
+            <c-placeholder message="Select a Product to see details"></c-placeholder>
+           
+        </template>
+    </lightning-card>
+</template>

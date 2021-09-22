@@ -1,0 +1,27 @@
+<template>
+    <div class="slds-p-around_medium ">
+        <lightning-input        
+            type="search"
+            onchange={handleKeyChange}
+            class="slds-align_absolute-center clsearch"
+            label="Search Products"
+            value={searchKey}            
+        ></lightning-input>
+
+    </div>
+    <lightning-card title="Available Products" icon-name="standard:account">
+        <div class="slds-p-around_medium wrapper">           
+            <template if:true={products.length}>
+                <div class="content">
+                    <template for:each={products} for:item="product">
+                       <c-cart-product key={product.Id} product={product} onselected={handleProductSelected}></c-cart-product > 
+                    </template>
+                </div>
+            </template>
+            <template if:false={products.length}>
+                <c-placeholder message="There are no Products with this Product Name"></c-placeholder>
+                
+            </template>
+        </div>
+    </lightning-card>
+</template>
