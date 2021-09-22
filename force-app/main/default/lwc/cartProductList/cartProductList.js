@@ -12,6 +12,7 @@ export default class CartProductList extends LightningElement {
     searchKey = '';
     products=[];
     error;
+    cartvalue=2;
      /**Load context for LMS */
      @wire(MessageContext)
      messageContext
@@ -42,5 +43,8 @@ export default class CartProductList extends LightningElement {
         publish(this.messageContext, PRODUCT_SELECTED_MESSAGE, {
             ProductId:event.detail
         })
+    }
+    handleCartClick(){
+
     }
 }

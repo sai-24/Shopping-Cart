@@ -76,5 +76,10 @@ export default class ProductCard extends NavigationMixin(LightningElement) {
             }
         })
     }
+//Add to cart 
+handleAddCartClick(){
+    
+}
+
 
 }

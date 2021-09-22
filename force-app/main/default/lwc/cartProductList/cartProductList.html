@@ -7,7 +7,9 @@
             label="Search Products"
             value={searchKey}            
         ></lightning-input>
-
+        <span>
+        <lightning-button variant="Neutral" label="Cart" onclick={handleCartClick}
+            class="slds-m-left_x-small cartbut"></lightning-button></span>
     </div>
     <lightning-card title="Available Products" icon-name="standard:account">
         <div class="slds-p-around_medium wrapper">           

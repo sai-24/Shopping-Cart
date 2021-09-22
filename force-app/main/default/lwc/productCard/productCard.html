@@ -16,10 +16,13 @@
                     <lightning-output-field field-name={descriptionField}></lightning-output-field>
                 </lightning-record-view-form> 
             </div>
+            <lightning-button variant="brand" label="Add To Cart" onclick={handleAddCartClick}
+    class="slds-m-left_x-small slds-align_absolute-center"></lightning-button>
         </template>
         <template if:false={recordId}>
             <c-placeholder message="Select a Product to see details"></c-placeholder>
            
         </template>
     </lightning-card>
+    
 </template>

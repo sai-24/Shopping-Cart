@@ -16,5 +16,8 @@ c-cart-product{
     /* background-color: rgb(242, 242, 242); */
     text-align: center;
     width: 40%;
-    height: 100px;
+    height: 60px;
+}
+.cartbut{
+    padding-left: 90%;
 }
