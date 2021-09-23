@@ -53,7 +53,7 @@ export default class ProductCard extends NavigationMixin(LightningElement) {
         this.productName = getFieldValue(recordData, NAME_FIELD)
         this.productPictureUrl = getFieldValue(recordData, PICTURE_URL_FIELD)
         this.cartStatus = getFieldValue(recordData, CART__FIELD)
-        console.log(this.cartStatus);
+        console.log('Cart Status in Product Card'+this.cartStatus);
     }
 
     connectedCallback(){

@@ -1,3 +1,14 @@
 <template>
-    
+
+    <lightning-card title="Total" icon-name="standard:product">
+        <div class="slds-p-around_medium clsprice">
+            Sub Total ({TotalCount} items) :
+            <lightning-formatted-number format-style="currency" currency-code="USD" value={TotalAmount} class="price"
+                maximum-fraction-digits="2"></lightning-formatted-number>
+                <div class="slds-p-around_medium">
+            <lightning-button variant="success" label="Procced to Buy" onclick={handleBuyClick}
+                class="slds-m-left_x-small slds-align_absolute-center"></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
 </template>

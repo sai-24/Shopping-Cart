@@ -21,7 +21,8 @@
             <template if:true={products.length}>
                 <div class="content">
                     <template for:each={products} for:item="product">
-                        <c-cart-product key={product.Id} product={product} onselected={handleProductSelected}>
+                        <c-cart-product key={product.Id} product={product} onselected={handleProductSelected}
+                            onremoved={handleProductRemoved}>
                         </c-cart-product>
                     </template>
                 </div>
