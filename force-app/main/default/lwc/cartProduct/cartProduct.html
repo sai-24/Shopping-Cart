@@ -14,4 +14,8 @@
             </div>
         </div>
     </div>
+    <template if:true={product.Cart__c}>
+        <lightning-button variant="brand" label="Remove From Cart"  onclick={handleRemoveCartClick}
+        class="slds-m-left_x-small slds-align_absolute-center"></lightning-button>
+    </template>
 </template>

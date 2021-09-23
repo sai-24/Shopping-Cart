@@ -1,6 +1,7 @@
 import { LightningElement,wire } from 'lwc';
 //Apex class
 import getProducts from '@salesforce/apex/getCartProducts.getProducts'
+import GetCartCount from '@salesforce/apex/getCartProducts.GetCartCount'
 //LMS
 import {publish, MessageContext} from 'lightning/messageService'
 import PRODUCT_SELECTED_MESSAGE from '@salesforce/messageChannel/ProductSelected__c'
@@ -12,16 +13,18 @@ export default class CartProductList extends LightningElement {
     searchKey = '';
     products=[];
     error;
-    cartvalue=2;
+    cartCount;
+    producttitle;
      /**Load context for LMS */
      @wire(MessageContext)
      messageContext
 
-    @wire(getProducts, { searchKey: '$searchKey' })
-    productsHandler({data, error}){
+    @wire(GetCartCount)
+    cartcountHandler({data, error}){
         if(data){
             console.log(data)
-            this.products = data
+            this.cartCount = 'Cart('+data+')';
+            //console.log(this.cartCount)
         }
         if(error){
             this.error = error
@@ -29,13 +32,8 @@ export default class CartProductList extends LightningElement {
         }
     }
     
-    handleKeyChange(event) {        
-        // being called within a delay of DELAY. This is to avoid a very large number of Apex method calls.
-        window.clearTimeout(this.delayTimeout);
-        const searchKey = event.target.value;       
-        this.delayTimeout = setTimeout(() => {
-            this.searchKey = searchKey;
-        }, DELAY);
+    handleKeyChange(event) {
+        this.searchKey = event.target.value;
     }
     //publishing Record Id
     handleProductSelected(event){
@@ -44,7 +42,28 @@ export default class CartProductList extends LightningElement {
             ProductId:event.detail
         })
     }
-    handleCartClick(){
+    //on Clicking of Cart
+    handleCartClick(event){ 
+        this.producttitle='Cart Products';      
+        this.productslist(true);
+    }       
+    productslist(cartchk){
+        console.log('Start'+cartchk);
+        getProducts({        
+            searchKey:this.searchKey,
+            cartvalue:cartchk
+            }).then(result=>{
+                
+                this.products=result;
+            console.log(result);
+            }
+            
+            );
+    }
+    handleSearch(){
+        this.producttitle='Avaliable Products';
+        this.productslist(false);
 
     }
+
 }

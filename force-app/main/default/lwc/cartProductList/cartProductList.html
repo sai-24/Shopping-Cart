@@ -1,28 +1,34 @@
 <template>
-    <div class="slds-p-around_medium ">
-        <lightning-input        
-            type="search"
-            onchange={handleKeyChange}
-            class="slds-align_absolute-center clsearch"
-            label="Search Products"
-            value={searchKey}            
-        ></lightning-input>
-        <span>
-        <lightning-button variant="Neutral" label="Cart" onclick={handleCartClick}
-            class="slds-m-left_x-small cartbut"></lightning-button></span>
-    </div>
-    <lightning-card title="Available Products" icon-name="standard:account">
-        <div class="slds-p-around_medium wrapper">           
+
+
+    <lightning-layout vertical-align="end" class="slds-var-m-bottom_small">
+        <lightning-layout-item flexibility="grow">
+            <lightning-input type="search" onchange={handleKeyChange} class="slds-align_absolute-center clsearch"
+                label="Search Products" value={searchKey}></lightning-input>
+        </lightning-layout-item>
+        <lightning-layout-item class="slds-var-p-left_xx-small">
+            <lightning-button label="Search" onclick={handleSearch}></lightning-button>
+        </lightning-layout-item>
+
+        <lightning-layout-item class="slds-var-p-left_xx-small">
+            <lightning-button variant="Neutral" label={cartCount} onclick={handleCartClick} class="slds-m-left_x-small">
+            </lightning-button>
+        </lightning-layout-item>
+    </lightning-layout>
+
+    <lightning-card title={producttitle} icon-name="standard:account">
+        <div class="slds-p-around_medium wrapper">
             <template if:true={products.length}>
                 <div class="content">
                     <template for:each={products} for:item="product">
-                       <c-cart-product key={product.Id} product={product} onselected={handleProductSelected}></c-cart-product > 
+                        <c-cart-product key={product.Id} product={product} onselected={handleProductSelected}>
+                        </c-cart-product>
                     </template>
                 </div>
             </template>
             <template if:false={products.length}>
                 <c-placeholder message="There are no Products with this Product Name"></c-placeholder>
-                
+
             </template>
         </div>
     </lightning-card>

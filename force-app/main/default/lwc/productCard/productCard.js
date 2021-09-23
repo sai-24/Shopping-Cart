@@ -1,4 +1,4 @@
-import { LightningElement,wire } from 'lwc';
+import { LightningElement,wire,track } from 'lwc';
 //Navigation
 import {NavigationMixin} from 'lightning/navigation'
 //shop_product__c Schema
@@ -12,6 +12,7 @@ import DESCRIPTION_FIELD from '@salesforce/schema/shop_product__c.Description__c
 import EMI_FIELD from '@salesforce/schema/shop_product__c.no_cost_EMI__c'
 import PRICE_FIELD from '@salesforce/schema/shop_product__c.price__c'
 import STORAGE_FIELD from '@salesforce/schema/shop_product__c.storage__c'
+import CART__FIELD from '@salesforce/schema/shop_product__c.Cart__c'
 // getFieldValue function is used to extract field values
 import {getFieldValue} from 'lightning/uiRecordApi'
 
@@ -19,11 +20,14 @@ import {getFieldValue} from 'lightning/uiRecordApi'
 import {subscribe, MessageContext, unsubscribe} from 'lightning/messageService'
 import PRODUCT_SELECTED_MESSAGE from '@salesforce/messageChannel/ProductSelected__c'
 
+//Apex class to update Cart
+import UpdateCartProduct from '@salesforce/apex/getCartProducts.UpdateCartProduct'
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class ProductCard extends NavigationMixin(LightningElement) {
     // load content for LMS
     @wire(MessageContext)
     messageContext
-
+    @track showCart=false;
     //exposing fields to make them available in the template
     batteryField = BATTERY_FIELD
     brandField = BRAND_FIELD 
@@ -39,7 +43,7 @@ export default class ProductCard extends NavigationMixin(LightningElement) {
     // product fields displayed with specific format
     productName;
     productPictureUrl;
-
+    cartStatus;
     //subscription reference for productSelected
     productSelectionSubscription;
 
@@ -48,9 +52,12 @@ export default class ProductCard extends NavigationMixin(LightningElement) {
         const recordData = records[this.recordId]
         this.productName = getFieldValue(recordData, NAME_FIELD)
         this.productPictureUrl = getFieldValue(recordData, PICTURE_URL_FIELD)
+        this.cartStatus = getFieldValue(recordData, CART__FIELD)
+        console.log(this.cartStatus);
     }
 
     connectedCallback(){
+        this.showCart=false;  
         this.subscribeHandler();
     }
 
@@ -78,7 +85,23 @@ export default class ProductCard extends NavigationMixin(LightningElement) {
     }
 //Add to cart 
 handleAddCartClick(){
-    
+   
+    UpdateCartProduct({
+        prodId:this.recordId
+    }).then(result=>{
+        console.log(result);
+        if(result=='Success'){
+            this.showCart=true;       
+            const evt = new ShowToastEvent({
+                title: 'Success',
+                message: 'Added to Cart Sucessful',
+                variant: 'success',
+                mode: 'dismissable'
+            });
+            this.dispatchEvent(evt);
+        }
+      
+    })
 }
 
 
