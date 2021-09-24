@@ -3,15 +3,15 @@
 
     <lightning-layout vertical-align="end" class="slds-var-m-bottom_small">
         <lightning-layout-item flexibility="grow">
-            <lightning-input type="search" onchange={handleKeyChange} class="slds-align_absolute-center clsearch"
+            <lightning-input type="search" onchange={handleKeyChange} class="slds-align_absolute-center clsearch "
                 label="Search Products" value={searchKey}></lightning-input>
         </lightning-layout-item>
         <lightning-layout-item class="slds-var-p-left_xx-small">
-            <lightning-button label="Search" onclick={handleSearch}></lightning-button>
+            <lightning-button label="Search" onclick={handleSearch} class="setcolour"></lightning-button>
         </lightning-layout-item>
 
         <lightning-layout-item class="slds-var-p-left_xx-small">
-            <lightning-button variant="Neutral" label={cartCount} onclick={handleCartClick} class="slds-m-left_x-small">
+            <lightning-button variant="Neutral" label={cartCount} onclick={handleCartClick} class="slds-m-left_x-small setcolour">
             </lightning-button>
         </lightning-layout-item>
     </lightning-layout>

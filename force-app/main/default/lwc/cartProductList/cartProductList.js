@@ -2,16 +2,16 @@ import { LightningElement,wire,track } from 'lwc';
 //Apex class
 import getProducts from '@salesforce/apex/getCartProducts.getProducts';
 import GetCartCount from '@salesforce/apex/getCartProducts.GetCartCount';
+import GetCartTotalAmount from '@salesforce/apex/getCartProducts.GetCartTotalAmount';
+import UpdateRemoveCartProduct from '@salesforce/apex/getCartProducts.UpdateRemoveCartProduct';
 //LMS
 import {publish, MessageContext} from 'lightning/messageService';
 import PRODUCT_SELECTED_MESSAGE from '@salesforce/messageChannel/ProductSelected__c';
-//For removing From Cart
-import UpdateRemoveCartProduct from '@salesforce/apex/getCartProducts.UpdateRemoveCartProduct';
+//Toast message
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
 
-/** The delay used when debouncing event handlers before invoking Apex. */
-const DELAY = 300;
+
 export default class CartProductList extends LightningElement {
     searchKey = '';
     products=[];
@@ -21,13 +21,28 @@ export default class CartProductList extends LightningElement {
      /**Load context for LMS */
      @wire(MessageContext)
      messageContext
-     @track wiredCountList = [];
+     @track wiredCountList = [];     
+     @track wiredAmountList = [];
 
+     issearchLoaded = false
+     iscartLoaded = false
+    // renderedCallback(){
+    //     if(this.isLoaded) return
+    //     const style = document.createElement('style')
+    //     style.innerText = `c-cart-product-list .setcolour{
+    //         background: blue;
+    //         color: white;
+    //     } `
+    //     this.template.querySelector('lightning-button').appendChild(style)
+    //     this.isLoaded = true
+    // }
+
+     //Cart Count 
      @wire(GetCartCount) cartcountHandler(result) {
         this.wiredCountList = result;    
         if (result.data) {
-          console.log('Count--->'+ result.data);
-          this.cartCount = 'Cart('+result.data+')';
+          //console.log('Count--->'+ result.data);
+          this.cartCount = 'Cart('+result.data+')';          
           this.error = undefined;
         } else if (result.error) {
           this.error = result.error;
@@ -35,23 +50,25 @@ export default class CartProductList extends LightningElement {
         }
         else{
             this.cartCount = 'Cart(0)';
-           //console.log('Cart(0)');
+         
         }
       }
-
-    // @wire(GetCartCount)
-    // cartcountHandler({data, error}){
-    //     if(data){
-    //         console.log(data)
-    //         this.cartCount = 'Cart('+data+')';
-    //         //console.log(this.cartCount)
-    //     }
-    //     if(error){
-    //         this.error = error
-    //         console.error(error)
-    //     }
-    // }
+      //Cart Amount
+      @wire(GetCartTotalAmount)
+      cartAmountHandler(result){
+          if(result.data){
+              this.wiredAmountList = result;
+              //console.log(result.data)
+              this.TotalAmount = result.data;            
+          }
+          if(result.error){
+              this.error = result.error
+              console.error(result.error)
+          }
+      }
     
+
+
     handleKeyChange(event) {
         this.searchKey = event.target.value;
     }
@@ -66,24 +83,30 @@ export default class CartProductList extends LightningElement {
     handleCartClick(event){ 
         this.producttitle='Cart Products';      
         this.productslist(true);
+        // if(this.iscartLoaded) return
+        // const style = document.createElement('style')
+        // style.innerText = `c-cart-product-list .setcolour{
+        //     background: red;
+        //     color: white;
+        // } `
+        // this.template.querySelector('lightning-button').appendChild(style)
+        // this.iscartLoaded = true
     }       
     productslist(cartchk){
         console.log('Start'+cartchk);
         getProducts({        
             searchKey:this.searchKey,
             cartvalue:cartchk
-            }).then(result=>{
-                
+            }).then(result=>{                
                 this.products=result;
             console.log(result);
-            }
-            
+            }            
             );
     }
     handleSearch(){
         this.producttitle='Avaliable Products';
         this.productslist(false);
-
+    
     }
     //Removing From Cart
     handleProductRemoved(event){
@@ -100,9 +123,10 @@ export default class CartProductList extends LightningElement {
                     this.dispatchEvent(evt);
                     this.productslist(true);
                     refreshApex(this.wiredCountList);
+                    refreshApex(this.wiredAmountList);
                 }                                
         })
         
     }
-
+  
 }

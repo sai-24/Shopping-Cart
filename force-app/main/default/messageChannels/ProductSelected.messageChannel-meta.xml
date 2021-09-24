@@ -4,7 +4,7 @@
     <isExposed>false</isExposed>
     <lightningMessageFields>
         <description>Selected Product id</description>
-        <fieldName>ProductId</fieldName>
+        <fieldName>ProductId</fieldName>         
     </lightningMessageFields>
     <masterLabel>ProductSelected</masterLabel>
 </LightningMessageChannel>

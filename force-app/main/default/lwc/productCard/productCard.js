@@ -19,15 +19,17 @@ import {getFieldValue} from 'lightning/uiRecordApi'
 //lightning message service
 import {subscribe, MessageContext, unsubscribe} from 'lightning/messageService'
 import PRODUCT_SELECTED_MESSAGE from '@salesforce/messageChannel/ProductSelected__c'
-
 //Apex class to update Cart
 import UpdateCartProduct from '@salesforce/apex/getCartProducts.UpdateCartProduct'
+import GetCartCount from '@salesforce/apex/getCartProducts.GetCartCount';
+import GetCartTotalAmount from '@salesforce/apex/getCartProducts.GetCartTotalAmount';
+import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class ProductCard extends NavigationMixin(LightningElement) {
     // load content for LMS
     @wire(MessageContext)
     messageContext
-    @track showCart=false;
+    
     //exposing fields to make them available in the template
     batteryField = BATTERY_FIELD
     brandField = BRAND_FIELD 
@@ -39,34 +41,63 @@ export default class ProductCard extends NavigationMixin(LightningElement) {
 
     //Id of shop_product__c to display data
     recordId;
-
+    error;
     // product fields displayed with specific format
     productName;
     productPictureUrl;
     cartStatus;
     //subscription reference for productSelected
     productSelectionSubscription;
-
+    CartStatusSubscription;
+    @track wiredCountList = [];
+    @track wiredAmountList = [];
+    totalcount;
     handleRecordLoaded(event){
         const {records} = event.detail
         const recordData = records[this.recordId]
+       
         this.productName = getFieldValue(recordData, NAME_FIELD)
         this.productPictureUrl = getFieldValue(recordData, PICTURE_URL_FIELD)
         this.cartStatus = getFieldValue(recordData, CART__FIELD)
         console.log('Cart Status in Product Card'+this.cartStatus);
     }
-
-    connectedCallback(){
-        this.showCart=false;  
+    //Cart Count
+    @wire(GetCartCount)
+    cartcountHandler(result){
+        this.wiredCountList=result;
+        if(result.data){
+            console.log(result.data)
+            this.totalcount = result.data;            
+        }
+        if(result.error){
+            this.error = result.error
+            console.error(result.error)
+        }
+    }
+    //Cart Amount
+    @wire(GetCartTotalAmount)
+    cartAmountHandler(result){
+        if(result.data){
+            this.wiredAmountList=result;
+            //console.log(result.data)
+            this.TotalAmount = result.data;            
+        }
+        if(result.error){
+            this.error = result.error
+            console.error(result.error)
+        }
+    }
+    connectedCallback(){        
         this.subscribeHandler();
     }
 
     subscribeHandler(){
-        this.productSelectionSubscription = subscribe(this.messageContext, PRODUCT_SELECTED_MESSAGE, (message)=>this.handleProductSelected(message))
+        this.productSelectionSubscription = subscribe(this.messageContext, PRODUCT_SELECTED_MESSAGE, (message)=>this.handleProductSelected(message))        
     }
     handleProductSelected(message){
         this.recordId = message.ProductId;
     }
+    
     disconnectedCallback(){
         unsubscribe(this.productSelectionSubscription)
         this.productSelectionSubscription = null
@@ -83,15 +114,15 @@ export default class ProductCard extends NavigationMixin(LightningElement) {
             }
         })
     }
-//Add to cart 
-handleAddCartClick(){
    
+//Add to cart 
+handleAddCartClick(){   
     UpdateCartProduct({
         prodId:this.recordId
     }).then(result=>{
-        console.log(result);
+        //console.log(result);
         if(result=='Success'){
-            this.showCart=true;       
+            this.cartStatus=true;
             const evt = new ShowToastEvent({
                 title: 'Success',
                 message: 'Added to Cart Sucessful',
@@ -99,10 +130,9 @@ handleAddCartClick(){
                 mode: 'dismissable'
             });
             this.dispatchEvent(evt);
-        }
-      
+            refreshApex(this.wiredCountList);
+            refreshApex(this.wiredAmountList);             
+        }      
     })
 }
-
-
 }
