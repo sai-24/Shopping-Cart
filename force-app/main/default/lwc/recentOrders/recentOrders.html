@@ -1,0 +1,15 @@
+<template>
+    <lightning-card title="Recent Orders">
+    <div class="slds-var-m-around_medium">
+        <template if:true={getrecentorders}>
+            <template for:each={getrecentorders} for:item="recentorder">
+               <p key={recentorder.Id} style="padding: 2%;"><a href={url} onclick={handleNavigateToRecord} data-id={recentorder.Id}>{recentorder.Name}</a></p>
+            </template>
+        </template>
+        <template if:true={error}>
+            <c-placeholder message={error}></c-placeholder>
+        </template> 
+       
+    </div>
+</lightning-card>
+</template>

@@ -56,4 +56,45 @@ public static Object GetCartTotalAmount(){
         throw new AuraHandledException(e.getMessage());
     }
 }
+
+@AuraEnabled
+public static string UpdateOrder(Integer CountProduct,Decimal GetAmount){
+    try {
+        List<Cart_Product_Item__c> OrderProductList=new List<Cart_Product_Item__c>();
+        List<shop_product__c> CartProducts=[select Id,product_name__c FROM shop_product__c where Cart__c =: true ];
+       
+        if(CartProducts.size() != CountProduct){
+            return 'Seems Error...,Please refresh.';
+        }
+        Cart_Order__c ord= new Cart_Order__c(            
+            Account__c='0015g00000TCeSqAAL',
+            Number_of_Products__c=CountProduct,
+            price__c=GetAmount,
+            Path__c='Activate'
+        );
+        insert ord;
+        for(shop_product__c shop : CartProducts){
+            Cart_Product_Item__c Productitems= new Cart_Product_Item__c(
+                Cart_Order__c=ord.id,
+                shopproduct__c=shop.Id,
+                Status__c='Active'                
+            );
+            OrderProductList.add(Productitems);
+            UpdateRemoveCartProduct(shop.Id);
+        }
+        insert OrderProductList;
+       
+        return 'Success';
+    } catch (Exception e) {
+        return(e.getMessage());
+    }
+}
+@AuraEnabled(cacheable=true)
+public static List<Cart_Order__c> GetRecentOrders(){
+    try {
+        return [select Id,Name from Cart_Order__c order by CreatedDate DESC LIMIT 10];
+    } catch (Exception e) {
+        throw new AuraHandledException(e.getMessage());
+    }
+}
 }

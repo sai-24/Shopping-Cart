@@ -66,7 +66,7 @@ export default class ProductCard extends NavigationMixin(LightningElement) {
     cartcountHandler(result){
         this.wiredCountList=result;
         if(result.data){
-            console.log(result.data)
+            //console.log(result.data)
             this.totalcount = result.data;            
         }
         if(result.error){
@@ -76,17 +76,19 @@ export default class ProductCard extends NavigationMixin(LightningElement) {
     }
     //Cart Amount
     @wire(GetCartTotalAmount)
-    cartAmountHandler(result){
-        if(result.data){
-            this.wiredAmountList=result;
-            //console.log(result.data)
-            this.TotalAmount = result.data;            
-        }
-        if(result.error){
-            this.error = result.error
-            console.error(result.error)
-        }
-    }
+      cartAmountHandler(result){
+          if(result.data){
+              this.wiredAmountList = result;
+              //console.log('Amount Before Adding---->'+result.data)
+              this.TotalAmount = result.data;            
+          }
+          else if(result.error){
+              this.error = result.error
+              console.error(result.error)
+          }else{
+              this.TotalAmount=0;
+          }
+      }
     connectedCallback(){        
         this.subscribeHandler();
     }

@@ -61,9 +61,11 @@ export default class CartProductList extends LightningElement {
               //console.log(result.data)
               this.TotalAmount = result.data;            
           }
-          if(result.error){
+          else if(result.error){
               this.error = result.error
               console.error(result.error)
+          }else{
+              this.TotalAmount=0;
           }
       }
     
@@ -81,16 +83,17 @@ export default class CartProductList extends LightningElement {
     }
     //on Clicking of Cart
     handleCartClick(event){ 
-        this.producttitle='Cart Products';      
+        this.producttitle='Cart Products';  
+        console.log('but status'+this.iscartLoaded);    
         this.productslist(true);
-        // if(this.iscartLoaded) return
-        // const style = document.createElement('style')
-        // style.innerText = `c-cart-product-list .setcolour{
-        //     background: red;
-        //     color: white;
-        // } `
-        // this.template.querySelector('lightning-button').appendChild(style)
-        // this.iscartLoaded = true
+        if(this.iscartLoaded) return
+        const style = document.createElement('style')
+        style.innerText = `c-cart-product-list .setcolour{
+            background: red;
+            color: white;
+        } `
+        this.template.querySelector('lightning-button').appendChild(style)
+        this.iscartLoaded = true
     }       
     productslist(cartchk){
         console.log('Start'+cartchk);
@@ -106,6 +109,14 @@ export default class CartProductList extends LightningElement {
     handleSearch(){
         this.producttitle='Avaliable Products';
         this.productslist(false);
+        if(this.issearchLoaded) return
+        const style = document.createElement('style')
+        style.innerText = `c-cart-product-list .setcolour{
+            background: blue;
+            color: white;
+        } `
+        this.template.querySelector('lightning-button').appendChild(style)
+        this.issearchLoaded = true
     
     }
     //Removing From Cart
